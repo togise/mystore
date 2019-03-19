@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 
-public class SimpleHttpClient {
+public class SimpleHttpClient implements HttpClient {
 
     private static final String GET = "GET";
 
@@ -26,7 +26,8 @@ public class SimpleHttpClient {
         this.connectTimeout = connectTimeout;
     }
 
-    InputStream get(URL url) {
+    @Override
+    public InputStream get(String url) {
         SimpleHttpGetRequest request = SimpleHttpUrlConnection.connect(url, readTimeout, connectTimeout).makeGetRequest();
         if(request.isRequestRedirected()) {
             return get(request.getRedirectUrl());
@@ -47,9 +48,10 @@ public class SimpleHttpClient {
             this.connection = connection;
         }
 
-        private static SimpleHttpUrlConnection connect(URL url, int readTimeout, int connectTimeout) {
+        private static SimpleHttpUrlConnection connect(String url, int readTimeout, int connectTimeout) {
             try {
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                 connection.setConnectTimeout(connectTimeout);
                 connection.setReadTimeout(readTimeout);
                 return new SimpleHttpUrlConnection(connection);
@@ -63,8 +65,8 @@ public class SimpleHttpClient {
         }
 
         private static class HttpConnectionException extends RuntimeException {
-            private HttpConnectionException(URL url, Throwable cause) {
-                super("Failed to open connection to Target Redsky API for " + url.toString(), cause);
+            private HttpConnectionException(String url, Throwable cause) {
+                super("Failed to open connection to Target Redsky API for " + url, cause);
             }
         }
     }
@@ -131,16 +133,12 @@ public class SimpleHttpClient {
             }
         }
 
-        private URL getRedirectUrl() {
-            try {
-                String url = connection.getHeaderField("Location");
-                if(url != null)
-                    return new URL(connection.getHeaderField("Location"));
-                else
-                    throw new NotFoundException();
-            } catch (MalformedURLException e) {
-                throw new HttpRequestException("Could not create URL", e);
-            }
+        private String getRedirectUrl() {
+            String url = connection.getHeaderField("Location");
+            if(url != null)
+                return url;
+            else
+                throw new NotFoundException();
         }
 
         public static class NotFoundException extends RuntimeException {
