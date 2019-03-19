@@ -1,7 +1,10 @@
 package com.togise.redsky.client
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.togise.http.client.HttpClient
 import spock.lang.Specification
+
+import static com.togise.redsky.client.RedskyClient.*
 
 class RedskyClientTest extends Specification {
 
@@ -9,10 +12,11 @@ class RedskyClientTest extends Specification {
 
     HttpClient httpClient = Mock()
     String baseRequestUrl = 'http://hello/$s'
-    NamingClient namingClient = new RedskyClient(httpClient, baseRequestUrl)
+
+    String id = "1234"
 
     def "test getProductName"() {
-        String id = "1234"
+        NamingClient namingClient = new RedskyClient(httpClient, baseRequestUrl, new ObjectMapper())
 
         when:
         String name = namingClient.getProductName(id)
@@ -20,5 +24,17 @@ class RedskyClientTest extends Specification {
         then:
         1 * httpClient.get(String.format(baseRequestUrl, id)) >> new ByteArrayInputStream(testJson.getBytes())
         name == "The Big Lebowski (Blu-ray)"
+    }
+
+    def "test exception"() {
+        ObjectMapper mapper = Mock()
+        mapper.readTree(_) >> {InputStream is -> throw new IOException("Oops! It failed")}
+        NamingClient namingClient = new RedskyClient(httpClient, baseRequestUrl, mapper)
+
+        when:
+        namingClient.getProductName(id)
+
+        then:
+        thrown RedskyClientJsonParseException
     }
 }

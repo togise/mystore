@@ -9,23 +9,26 @@ import java.io.InputStream;
 
 public class RedskyClient implements NamingClient {
 
-    private final HttpClient httpClient;
-    private final String baseRequestUrl;
     private static final String DEFAULT_URL = "http://redsky.target.com/v2/pdp/tcin/$s?excludes=taxonomy,price,promotion,bulk_ship,rating_and_review_reviews,rating_and_review_statistics,question_answer_statistics";
 
+    private final HttpClient httpClient;
+    private final String baseRequestUrl;
+    private final ObjectMapper objectMapper;
+
     public RedskyClient(HttpClient client) {
-        this(client, DEFAULT_URL);
+        this(client, DEFAULT_URL, new ObjectMapper());
     }
 
-    RedskyClient(HttpClient client, String baseRequestUrl) {
+    RedskyClient(HttpClient client, String baseRequestUrl, ObjectMapper objectMapper) {
         this.httpClient = client;
         this.baseRequestUrl = baseRequestUrl;
+        this.objectMapper = objectMapper;
     }
 
     @Override
     public String getProductName(String id) {
         try (InputStream inputStream = this.httpClient.get(String.format(baseRequestUrl, id))){
-            JsonNode node = new ObjectMapper().readTree(inputStream);
+            JsonNode node = objectMapper.readTree(inputStream);
             return node.get("product")
                     .get("item")
                     .get("product_description")
@@ -36,7 +39,7 @@ public class RedskyClient implements NamingClient {
         }
     }
 
-    private class RedskyClientJsonParseException extends RuntimeException {
+    static class RedskyClientJsonParseException extends RuntimeException {
         private RedskyClientJsonParseException(IOException e) {
             super(e);
         }
