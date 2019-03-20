@@ -1,31 +1,51 @@
 package com.togise.product.repository.dynamodb;
 
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.document.TableCollection;
+import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.model.*;
+import com.togise.product.repository.Price;
 import com.togise.product.repository.Product;
 import com.togise.product.repository.ProductRepository;
 
 public class ProductDynamoDBRepo implements ProductRepository {
 
+    private static final String ATTR_NAME_ID = "Id";
+    private static final String ATTR_NAME_NAME = "Name";
+    private static final String ATTR_NAME_CURRENT_PRICE_CURRENCY = "CurrentPriceCurrency";
+    private static final String ATTR_NAME_CURRENT_PRICE = "CurrentPrice";
     private static final String TABLE_NAME = "PRODUCT";
-    private final DynamoDB dynamoDB;
     private final Table table;
 
-    private ProductDynamoDBRepo(DynamoDB dynamoDB) {
-        this.dynamoDB = dynamoDB;
+    private ProductDynamoDBRepo(final DynamoDB dynamoDB) {
         this.table = dynamoDB.getTable(TABLE_NAME);
     }
 
     @Override
     public Product getProduct(int id) {
-        return null;
+        Item item = table.getItem(ATTR_NAME_ID, id);
+
+        Price price = new Price(
+                Price.Currency.valueOf(item.getString(ATTR_NAME_CURRENT_PRICE_CURRENCY)),
+                item.getNumber(ATTR_NAME_CURRENT_PRICE));
+
+        return new Product(price,
+                item.getString(ATTR_NAME_NAME),
+                item.getInt(ATTR_NAME_ID));
     }
 
-    private static ProductRepository createNewInstance(DynamoDB dynamoDB) {
+    @Override
+    public int putProduct(Product product) {
+        Item item = new Item()
+                .withPrimaryKey(ATTR_NAME_ID, product.getId())
+                .withString(ATTR_NAME_NAME, product.getName())
+                .withString(ATTR_NAME_CURRENT_PRICE_CURRENCY, product.getCurrentPrice().getCurrency().name())
+                .withNumber(ATTR_NAME_CURRENT_PRICE, product.getCurrentPrice().getPrice());
+        table.putItem(item);
+        return product.getId();
+    }
 
-        if(isTableExists(dynamoDB)) {
+    public static ProductRepository createNewInstance(DynamoDB dynamoDB) {
+
+        if(!isTableExists(dynamoDB)) {
             createTable(dynamoDB);
         }
         return new ProductDynamoDBRepo(dynamoDB);
@@ -36,9 +56,9 @@ public class ProductDynamoDBRepo implements ProductRepository {
                 .withTableName(TABLE_NAME)
                 .withProvisionedThroughput(new ProvisionedThroughput(10L, 10L))
                 .withAttributeDefinitions(
-                        new AttributeDefinition("id", ScalarAttributeType.N)
+                        new AttributeDefinition(ATTR_NAME_ID, ScalarAttributeType.N)
                 ).withKeySchema(
-                        new KeySchemaElement("id", KeyType.HASH)
+                        new KeySchemaElement(ATTR_NAME_ID, KeyType.HASH)
                 );
         dynamoDB.createTable(createTableRequest);
     }
