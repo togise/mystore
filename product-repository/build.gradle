@@ -1,0 +1,13 @@
+configurations {
+    dynamodb
+}
+
+repositories {
+    maven {
+        url 'https://s3-us-west-2.amazonaws.com/dynamodb-local/release'
+    }
+}
+
+dependencies {
+    implementation 'com.amazonaws:DynamoDBLocal:1.11.477'
+}

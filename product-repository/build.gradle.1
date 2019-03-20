@@ -1,0 +1,25 @@
+configurations {
+    dynamodb
+}
+
+repositories {
+    maven {
+        url 'https://s3-us-west-2.amazonaws.com/dynamodb-local/release'
+    }
+}
+
+dependencies {
+    testImplementation 'com.amazonaws:DynamoDBLocal:1.11.477'
+    dynamodb fileTree (dir: 'lib', include: ["*.dylib", "*.so", "*.dll"])
+    dynamodb 'com.amazonaws:DynamoDBLocal:1.11.477'
+}
+
+task copyNativeDeps(type: Copy) {
+    from configurations.dynamodb
+    into "$project.buildDir/libs/"
+}
+
+test.dependsOn copyNativeDeps
+test.doFirst {
+    systemProperty "java.library.path", "$project.buildDir/libs/"
+}

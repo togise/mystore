@@ -4,4 +4,4 @@ pluginManagement {
 	}
 }
 rootProject.name = 'mystore'
-include "web-controller", "target-redsky-client"
+include "web-controller", "target-redsky-client", "product-repository"
