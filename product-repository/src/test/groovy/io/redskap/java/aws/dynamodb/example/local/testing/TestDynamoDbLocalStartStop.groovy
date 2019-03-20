@@ -2,14 +2,7 @@ package io.redskap.java.aws.dynamodb.example.local.testing
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.local.embedded.DynamoDBEmbedded
-import com.amazonaws.services.dynamodbv2.model.AttributeDefinition
-import com.amazonaws.services.dynamodbv2.model.CreateTableRequest
-import com.amazonaws.services.dynamodbv2.model.CreateTableResult
-import com.amazonaws.services.dynamodbv2.model.KeySchemaElement
-import com.amazonaws.services.dynamodbv2.model.KeyType
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput
-import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType
-import io.redskap.java.aws.dynamodb.example.local.testing.AwsDynamoDbLocalTestUtils
+import com.amazonaws.services.dynamodbv2.model.*
 import spock.lang.Specification
 
 /**
@@ -17,7 +10,7 @@ import spock.lang.Specification
  */
 class TestDynamoDbLocalStartStop extends Specification {
     def "test stop start" () {
-        AwsDynamoDbLocalTestUtils.initSqLite();
+        AwsDynamoDbLocalTestUtils.initSqLite()
         AmazonDynamoDB ddb = DynamoDBEmbedded.create().amazonDynamoDB()
         String tableName = "Movies"
         String hashKeyName = "film_id"
