@@ -1,7 +1,7 @@
 package com.togise.mystore.web.controller;
 
 import com.togise.http.client.SimpleHttpClient.SimpleHttpGetRequest.NotFoundException;
-import com.togise.product.repository.dynamodb.ProductDynamoDBRepo.ItemNotFoundException;
+import com.togise.product.price.repository.dynamodb.ProductPriceDynamoDBRepo.ItemNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -1,4 +1,4 @@
-package com.togise.product.repository;
+package com.togise.product.price.repository;
 
 import java.math.BigDecimal;
 import java.util.Objects;

@@ -1,19 +1,18 @@
-package com.togise.product.repository.dynamodb
+package com.togise.product.price.repository.dynamodb
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.document.DynamoDB
 import com.amazonaws.services.dynamodbv2.local.embedded.DynamoDBEmbedded
 import com.amazonaws.services.dynamodbv2.local.shared.access.AmazonDynamoDBLocal
-import com.togise.product.repository.Price
-import com.togise.product.repository.Product
-import com.togise.product.repository.ProductRepository
+import com.togise.product.price.repository.ProductPrice
+import com.togise.product.price.repository.ProductPriceRepository
 import io.redskap.java.aws.dynamodb.example.local.testing.AwsDynamoDbLocalTestUtils
 import spock.lang.Shared
 import spock.lang.Specification
 
-import static com.togise.product.repository.Price.Currency.USD
+import static com.togise.product.price.repository.Price.Currency.USD
 
-class ProductDynamoDBRepoTest extends Specification {
+class ProductPriceDynamoDBRepoTest extends Specification {
 
     @Shared
     DynamoDB dynamoDB
@@ -34,10 +33,10 @@ class ProductDynamoDBRepoTest extends Specification {
 
     def "test createTable"() {
         when:
-        ProductDynamoDBRepo.createTable(dynamoDB)
+        ProductPriceDynamoDBRepo.createTable(dynamoDB)
 
         then:
-        ProductDynamoDBRepo.isTableExists(dynamoDB)
+        ProductPriceDynamoDBRepo.isTableExists(dynamoDB)
     }
 
     def "test table does not exist"() {
@@ -48,24 +47,24 @@ class ProductDynamoDBRepoTest extends Specification {
         DynamoDB dynamoDB = new DynamoDB(client)
 
         when:
-        boolean result = ProductDynamoDBRepo.isTableExists(dynamoDB)
+        boolean result = ProductPriceDynamoDBRepo.isTableExists(dynamoDB)
 
         then:
         !result
     }
 
     def "test put and get"() {
-        ProductRepository productRepository = ProductDynamoDBRepo.createNewInstance(dynamoDB)
-        Product product = new Product(
-                new Price(USD, new BigDecimal("22.44")),
+        ProductPriceRepository productRepository = ProductPriceDynamoDBRepo.createNewInstance(dynamoDB)
+        ProductPrice product = new ProductPrice(
+                new com.togise.product.price.repository.Price(USD, new BigDecimal("22.44")),
                 123
         )
 
         when:
-        productRepository.putProduct(product)
+        productRepository.putProductPrice(product)
 
         then:
-        productRepository.getProduct(product.id) == product
+        productRepository.getProductPrice(product.id) == product
 
 
 

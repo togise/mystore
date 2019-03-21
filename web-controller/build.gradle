@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-	implementation project(':product-repository')
+	implementation project(':product-price-repository')
 	implementation project(':target-redsky-client')
 	implementation 'com.amazonaws:DynamoDBLocal:1.11.477'
 	implementation 'org.springframework.boot:spring-boot-starter-web'

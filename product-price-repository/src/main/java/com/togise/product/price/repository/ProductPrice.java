@@ -1,17 +1,17 @@
-package com.togise.product.repository;
+package com.togise.product.price.repository;
 
 import java.util.Objects;
 
 // TODO rename to product price
-public class Product {
+public class ProductPrice {
     private final Price currentPrice;
     private final int id;
 
-    public Product(Product product) {
-        this(product.currentPrice, product.id);
+    public ProductPrice(ProductPrice productPrice) {
+        this(productPrice.currentPrice, productPrice.id);
     }
 
-    public Product(Price currentPrice, int id) {
+    public ProductPrice(Price currentPrice, int id) {
         this.currentPrice = currentPrice;
         this.id = id;
     }
@@ -27,10 +27,10 @@ public class Product {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Product)) return false;
-        Product product = (Product) o;
-        return id == product.id &&
-                Objects.equals(currentPrice, product.currentPrice);
+        if (!(o instanceof ProductPrice)) return false;
+        ProductPrice productPrice = (ProductPrice) o;
+        return id == productPrice.id &&
+                Objects.equals(currentPrice, productPrice.currentPrice);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{" +
+        return "ProductPrice{" +
                 "currentPrice=" + currentPrice +
                 ", id=" + id +
                 '}';

@@ -1,8 +1,8 @@
 package com.togise.mystore.web.controller;
 
 import com.togise.mystore.web.view.ProductView;
-import com.togise.product.repository.Product;
-import com.togise.product.repository.ProductRepository;
+import com.togise.product.price.repository.ProductPrice;
+import com.togise.product.price.repository.ProductPriceRepository;
 import com.togise.redsky.client.NamingClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductPriceRepository productPriceRepository;
 
     @Autowired
     private NamingClient redskyClient;
@@ -26,7 +26,7 @@ public class ProductController {
     )
     public ProductView getProduct(@PathVariable int id) {
         String name = redskyClient.getProductName(id);
-        Product product = productRepository.getProduct(id);
-        return new ProductView(product, name);
+        ProductPrice productPrice = productPriceRepository.getProductPrice(id);
+        return new ProductView(productPrice, name);
     }
 }

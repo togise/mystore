@@ -1,13 +1,13 @@
 package com.togise.mystore.web.view;
 
-import com.togise.product.repository.Product;
+import com.togise.product.price.repository.ProductPrice;
 
-public class ProductView extends Product {
+public class ProductView extends ProductPrice {
 
     private final String name;
 
-    public ProductView(Product product, String name) {
-        super(product);
+    public ProductView(ProductPrice productPrice, String name) {
+        super(productPrice);
         this.name = name;
     }
 

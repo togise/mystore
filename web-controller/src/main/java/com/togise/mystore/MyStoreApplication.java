@@ -5,8 +5,8 @@ import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.local.embedded.DynamoDBEmbedded;
 import com.amazonaws.services.dynamodbv2.local.shared.access.AmazonDynamoDBLocal;
 import com.togise.http.client.SimpleHttpClient;
-import com.togise.product.repository.ProductRepository;
-import com.togise.product.repository.dynamodb.ProductDynamoDBRepo;
+import com.togise.product.price.repository.ProductPriceRepository;
+import com.togise.product.price.repository.dynamodb.ProductPriceDynamoDBRepo;
 import com.togise.redsky.client.NamingClient;
 import com.togise.redsky.client.RedskyClient;
 import io.redskap.java.aws.dynamodb.example.local.testing.AwsDynamoDbLocalTestUtils;
@@ -22,12 +22,13 @@ public class MyStoreApplication {
 	}
 
 	@Bean
-	public ProductRepository productRepository() {
+	public ProductPriceRepository productRepository() {
 		AwsDynamoDbLocalTestUtils.initSqLite();
 		AmazonDynamoDBLocal amazonDynamoDBLocal = DynamoDBEmbedded.create();
 		AmazonDynamoDB client = amazonDynamoDBLocal.amazonDynamoDB();
 		DynamoDB dynamoDB = new DynamoDB(client);
-		return ProductDynamoDBRepo.createNewInstance(dynamoDB);
+		ProductPriceRepository repository = ProductPriceDynamoDBRepo.createNewInstance(dynamoDB);
+		return repository;
 	}
 
 	@Bean

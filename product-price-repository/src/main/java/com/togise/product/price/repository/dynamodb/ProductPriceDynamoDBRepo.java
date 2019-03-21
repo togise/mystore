@@ -1,12 +1,12 @@
-package com.togise.product.repository.dynamodb;
+package com.togise.product.price.repository.dynamodb;
 
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.model.*;
-import com.togise.product.repository.Price;
-import com.togise.product.repository.Product;
-import com.togise.product.repository.ProductRepository;
+import com.togise.product.price.repository.Price;
+import com.togise.product.price.repository.ProductPrice;
+import com.togise.product.price.repository.ProductPriceRepository;
 
-public class ProductDynamoDBRepo implements ProductRepository {
+public class ProductPriceDynamoDBRepo implements ProductPriceRepository {
 
     private static final String ATTR_NAME_ID = "Id";
     private static final String ATTR_NAME_CURRENT_PRICE_CURRENCY = "CurrentPriceCurrency";
@@ -14,12 +14,12 @@ public class ProductDynamoDBRepo implements ProductRepository {
     private static final String TABLE_NAME = "PRODUCT";
     private final Table table;
 
-    private ProductDynamoDBRepo(final DynamoDB dynamoDB) {
+    private ProductPriceDynamoDBRepo(final DynamoDB dynamoDB) {
         this.table = dynamoDB.getTable(TABLE_NAME);
     }
 
     @Override
-    public Product getProduct(int id) {
+    public ProductPrice getProductPrice(int id) {
         Item item = table.getItem(ATTR_NAME_ID, id);
 
         ifItemNotFoundThrowNotFoundException(item, id);
@@ -28,26 +28,26 @@ public class ProductDynamoDBRepo implements ProductRepository {
                 Price.Currency.valueOf(item.getString(ATTR_NAME_CURRENT_PRICE_CURRENCY)),
                 item.getNumber(ATTR_NAME_CURRENT_PRICE));
 
-        return new Product(price,
+        return new ProductPrice(price,
                 item.getInt(ATTR_NAME_ID));
     }
 
     @Override
-    public int putProduct(Product product) {
+    public int putProductPrice(ProductPrice productPrice) {
         Item item = new Item()
-                .withPrimaryKey(ATTR_NAME_ID, product.getId())
-                .withString(ATTR_NAME_CURRENT_PRICE_CURRENCY, product.getCurrentPrice().getCurrency().name())
-                .withNumber(ATTR_NAME_CURRENT_PRICE, product.getCurrentPrice().getPrice());
+                .withPrimaryKey(ATTR_NAME_ID, productPrice.getId())
+                .withString(ATTR_NAME_CURRENT_PRICE_CURRENCY, productPrice.getCurrentPrice().getCurrency().name())
+                .withNumber(ATTR_NAME_CURRENT_PRICE, productPrice.getCurrentPrice().getPrice());
         table.putItem(item);
-        return product.getId();
+        return productPrice.getId();
     }
 
-    public static ProductRepository createNewInstance(DynamoDB dynamoDB) {
+    public static ProductPriceRepository createNewInstance(DynamoDB dynamoDB) {
 
         if(!isTableExists(dynamoDB)) {
             createTable(dynamoDB);
         }
-        return new ProductDynamoDBRepo(dynamoDB);
+        return new ProductPriceDynamoDBRepo(dynamoDB);
     }
 
     static void createTable(DynamoDB dynamoDB) {
