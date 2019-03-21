@@ -4,6 +4,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.document.DynamoDB
 import com.amazonaws.services.dynamodbv2.local.embedded.DynamoDBEmbedded
 import com.amazonaws.services.dynamodbv2.local.shared.access.AmazonDynamoDBLocal
+import com.togise.product.price.repository.Price
 import com.togise.product.price.repository.ProductPrice
 import com.togise.product.price.repository.ProductPriceRepository
 import io.redskap.java.aws.dynamodb.example.local.testing.AwsDynamoDbLocalTestUtils
@@ -56,7 +57,7 @@ class ProductPriceDynamoDBRepoTest extends Specification {
     def "test put and get"() {
         ProductPriceRepository productRepository = ProductPriceDynamoDBRepo.createNewInstance(dynamoDB)
         ProductPrice product = new ProductPrice(
-                new com.togise.product.price.repository.Price(USD, new BigDecimal("22.44")),
+                new Price(USD, new BigDecimal("22.44")),
                 123
         )
 
@@ -65,8 +66,6 @@ class ProductPriceDynamoDBRepoTest extends Specification {
 
         then:
         productRepository.getProductPrice(product.id) == product
-
-
 
     }
 }

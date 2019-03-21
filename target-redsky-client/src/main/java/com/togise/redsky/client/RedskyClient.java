@@ -9,7 +9,7 @@ import java.io.InputStream;
 
 public class RedskyClient implements NamingClient {
 
-    private static final String DEFAULT_URL = "http://redsky.target.com/v2/pdp/tcin/$s?excludes=taxonomy,price,promotion,bulk_ship,rating_and_review_reviews,rating_and_review_statistics,question_answer_statistics";
+    private static final String DEFAULT_URL = "http://redsky.target.com/v2/pdp/tcin/%d?excludes=taxonomy,price,promotion,bulk_ship,rating_and_review_reviews,rating_and_review_statistics,question_answer_statistics";
 
     private final HttpClient httpClient;
     private final String baseRequestUrl;
