@@ -9,7 +9,6 @@ import com.togise.product.repository.ProductRepository;
 public class ProductDynamoDBRepo implements ProductRepository {
 
     private static final String ATTR_NAME_ID = "Id";
-    private static final String ATTR_NAME_NAME = "Name";
     private static final String ATTR_NAME_CURRENT_PRICE_CURRENCY = "CurrentPriceCurrency";
     private static final String ATTR_NAME_CURRENT_PRICE = "CurrentPrice";
     private static final String TABLE_NAME = "PRODUCT";
@@ -23,12 +22,13 @@ public class ProductDynamoDBRepo implements ProductRepository {
     public Product getProduct(int id) {
         Item item = table.getItem(ATTR_NAME_ID, id);
 
+        ifItemNotFoundThrowNotFoundException(item, id);
+
         Price price = new Price(
                 Price.Currency.valueOf(item.getString(ATTR_NAME_CURRENT_PRICE_CURRENCY)),
                 item.getNumber(ATTR_NAME_CURRENT_PRICE));
 
         return new Product(price,
-                item.getString(ATTR_NAME_NAME),
                 item.getInt(ATTR_NAME_ID));
     }
 
@@ -36,7 +36,6 @@ public class ProductDynamoDBRepo implements ProductRepository {
     public int putProduct(Product product) {
         Item item = new Item()
                 .withPrimaryKey(ATTR_NAME_ID, product.getId())
-                .withString(ATTR_NAME_NAME, product.getName())
                 .withString(ATTR_NAME_CURRENT_PRICE_CURRENCY, product.getCurrentPrice().getCurrency().name())
                 .withNumber(ATTR_NAME_CURRENT_PRICE, product.getCurrentPrice().getPrice());
         table.putItem(item);
@@ -72,5 +71,15 @@ public class ProductDynamoDBRepo implements ProductRepository {
         return true;
     }
 
+    private static void ifItemNotFoundThrowNotFoundException(Item item, int id) {
+        if(item == null)
+            throw new ItemNotFoundException(id);
+    }
+
+    public static class ItemNotFoundException extends RuntimeException {
+        public ItemNotFoundException(int id) {
+            super("Item not found for id " + id);
+        }
+    }
 
 }

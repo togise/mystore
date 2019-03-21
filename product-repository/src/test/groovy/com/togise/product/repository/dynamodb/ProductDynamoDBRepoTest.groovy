@@ -18,16 +18,23 @@ class ProductDynamoDBRepoTest extends Specification {
     @Shared
     DynamoDB dynamoDB
 
+    @Shared
+    AmazonDynamoDBLocal amazonDynamoDBLocal
+
     def setupSpec() {
         AwsDynamoDbLocalTestUtils.initSqLite()
-        AmazonDynamoDBLocal amazonDynamoDBLocal = DynamoDBEmbedded.create()
+        amazonDynamoDBLocal = DynamoDBEmbedded.create()
         AmazonDynamoDB client = amazonDynamoDBLocal.amazonDynamoDB()
         dynamoDB = new DynamoDB(client)
     }
 
+    def cleanupSpec() {
+        amazonDynamoDBLocal.shutdown()
+    }
+
     def "test createTable"() {
         when:
-        ProductRepository productRepository = ProductDynamoDBRepo.createTable(dynamoDB)
+        ProductDynamoDBRepo.createTable(dynamoDB)
 
         then:
         ProductDynamoDBRepo.isTableExists(dynamoDB)
@@ -51,7 +58,6 @@ class ProductDynamoDBRepoTest extends Specification {
         ProductRepository productRepository = ProductDynamoDBRepo.createNewInstance(dynamoDB)
         Product product = new Product(
                 new Price(USD, new BigDecimal("22.44")),
-                "test product name",
                 123
         )
 
@@ -60,6 +66,8 @@ class ProductDynamoDBRepoTest extends Specification {
 
         then:
         productRepository.getProduct(product.id) == product
+
+
 
     }
 }

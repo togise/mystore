@@ -4,7 +4,16 @@ plugins {
 
 apply plugin: 'io.spring.dependency-management'
 
+repositories {
+	maven {
+		url 'https://s3-us-west-2.amazonaws.com/dynamodb-local/release'
+	}
+}
+
 dependencies {
+	implementation project(':product-repository')
+	implementation project(':target-redsky-client')
+	implementation 'com.amazonaws:DynamoDBLocal:1.11.477'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

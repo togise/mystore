@@ -1,6 +1,7 @@
 package com.togise.mystore
 
-import com.togise.mystore.web.controller.WebController
+
+import com.togise.mystore.web.controller.ProductController
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Specification
@@ -9,10 +10,10 @@ import spock.lang.Specification
 class LoadContextTest extends Specification {
 
     @Autowired (required = false)
-    private WebController webController
+    private ProductController productController
 
     def "when context is loaded then all expected beans are created"() {
-        expect: "the WebController is created"
-        webController
+        expect: "the ProductController is created"
+        productController
     }
 }

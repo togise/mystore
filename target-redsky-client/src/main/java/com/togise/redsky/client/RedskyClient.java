@@ -26,7 +26,7 @@ public class RedskyClient implements NamingClient {
     }
 
     @Override
-    public String getProductName(String id) {
+    public String getProductName(int id) {
         try (InputStream inputStream = this.httpClient.get(String.format(baseRequestUrl, id))){
             JsonNode node = objectMapper.readTree(inputStream);
             return node.get("product")

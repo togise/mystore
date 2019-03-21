@@ -13,7 +13,7 @@ class RedskyClientTest extends Specification {
     HttpClient httpClient = Mock()
     String baseRequestUrl = 'http://hello/$s'
 
-    String id = "1234"
+    int id = 1234
 
     def "test getProductName"() {
         NamingClient namingClient = new RedskyClient(httpClient, baseRequestUrl, new ObjectMapper())

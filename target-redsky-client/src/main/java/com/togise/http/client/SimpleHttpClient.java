@@ -3,7 +3,6 @@ package com.togise.http.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Scanner;
@@ -146,10 +145,6 @@ public class SimpleHttpClient implements HttpClient {
         }
 
         private static class HttpRequestException extends RuntimeException {
-
-            private HttpRequestException(String errorMessage, Throwable cause) {
-                super(errorMessage, cause);
-            }
 
             private HttpRequestException(int statusCode, URL url, String errorResponse) {
                 super("Failed request with " + statusCode + " when making a request to url " + url +
