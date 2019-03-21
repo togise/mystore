@@ -47,14 +47,11 @@ public class MyStoreApplication {
 	}
 
 	private void loadFakeData(ProductPriceRepository repository) {
-		Stream.of(13860428).map(this::createProductPrice).forEach(repository::putProductPrice);
-	}
-
-	private ProductPrice createProductPrice(int id) {
-		Random r = new Random();
-		int randomPrice = r.nextInt(20) + 1;
-		Price price = new Price(USD, new BigDecimal(randomPrice));
-		return new ProductPrice(price, id);
+		ProductPrice product = new ProductPrice(
+				new Price(USD, new BigDecimal("22.44")),
+				13860428
+		);
+		repository.putProductPrice(product);
 	}
 
 }
